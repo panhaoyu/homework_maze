@@ -16,6 +16,13 @@ class UninformedSearch(ABC):
     cost = 0
 
     def __init__(self, name, maze, initial_node, goal_states):
+        """
+        搜索工具类
+        :param name: 搜索器的名字
+        :param maze: 迷宫
+        :param initial_node: 初始节点
+        :param goal_states: 目标状态
+        """
         self.name = name
         self.frontier = []
         self.visited = []
@@ -26,6 +33,10 @@ class UninformedSearch(ABC):
         self.cost = 0
 
     def initialize(self):  # Add initial state to frontier
+        """
+        初始化这个分析器，清空所有缓存
+        :return:
+        """
         self.frontier.clear()
         self.path.clear()
         self.visited.clear()
@@ -33,10 +44,16 @@ class UninformedSearch(ABC):
         self.frontier.append(self.initial_node)
 
     def find_possible_moves_from_node(self, node):
-        accessible_nodes = []
-        cell = self.maze[node.row][node.column]
+        """
+        获取一个位置周围的所有可能的新位置
+        :param node: 起始节点
+        :return: 所有的可以到达的节点
+        """
+        accessible_nodes = []  # 可达到的位置，先用空列表占位
+        cell = self.maze[node.row][node.column]  # 在迷宫中取出这个节点位置处的内容
+        # 以下四部分基本一致，仅标注一次
         directions = cell["move"]
-        if 'w' in str(directions):
+        if 'w' in str(directions):  # 如果这个节点可以向西走，将这个节点添加至路径
             accessible_nodes.append(Node(node.row, node.column - 1, node, node.cost_from_initial_node + cell["cost"]))
         if 's' in str(directions):
             accessible_nodes.append(Node(node.row + 1, node.column, node, node.cost_from_initial_node + cell["cost"]))
@@ -48,9 +65,19 @@ class UninformedSearch(ABC):
 
     @abstractmethod
     def add_new_nodes_to_frontier(self, nodes):
+        """
+        这个用于给子类进行继承，每个类自己处理
+        :param nodes:
+        :return:
+        """
         pass
 
     def update_path(self, current_node):  # Constructs current path and cost from scratch
+        """
+        指定一个位置，将路径更新为该位置到起点的路径
+        :param current_node: 当前节点
+        :return:
+        """
         self.path.clear()
         self.cost = 0
         current = current_node
@@ -60,11 +87,24 @@ class UninformedSearch(ABC):
             current = current.parent
 
     def process_accessible_nodes(self, current_node, accessible_nodes):
+        """
+        处理某个节点处可以到达的节点
+        对于新传入的节点，如果某个节点已经记录，则删去，否则添加入记录
+        :param current_node: 当前节点
+        :param accessible_nodes: 新传入的节点
+        :return:
+        """
         accessible_nodes = self.remove_visited_nodes(accessible_nodes)
         self.add_new_nodes_to_frontier(accessible_nodes)
 
     @staticmethod
     def list_contains_node(search_list, node):
+        """
+        判断列表中是否已存在这个节点
+        :param search_list: 待搜寻的列表
+        :param node: 某个节点
+        :return:
+        """
         if len(search_list) <= 0:
             return False
         else:
@@ -85,6 +125,12 @@ class UninformedSearch(ABC):
 
     @staticmethod
     def remove_node_from_list(search_list, node):
+        """
+        将节点从列表中删除
+        :param search_list:
+        :param node:
+        :return:
+        """
         if len(search_list) > 0:
             if isinstance(search_list[0], Node):
                 for item in search_list:
@@ -104,6 +150,11 @@ class UninformedSearch(ABC):
                             return
 
     def remove_visited_nodes(self, nodes):
+        """
+        将已访问过的节点删除
+        :param nodes: 可能存在已访问过的节点
+        :return: 过滤后的节点
+        """
         counter = len(nodes) - 1
         while counter >= 0:
             if UninformedSearch.list_contains_node(self.visited, nodes[counter]):
@@ -112,6 +163,11 @@ class UninformedSearch(ABC):
         return nodes
 
     def progress(self, mode):  # Gets the first state in frontier and expands it
+        """
+        处理
+        :param mode: 模式为1则不显示迷宫，模式为2则显示迷宫
+        :return:
+        """
         current_node = self.frontier[0]
         self.frontier.pop(0)  # Remove the first node from frontier
         if not UninformedSearch.list_contains_node(self.visited, current_node):
@@ -133,6 +189,10 @@ class UninformedSearch(ABC):
 
     @staticmethod
     def clear_console():
+        """
+        清理控制台内空
+        :return:
+        """
         sleep(0.5)
         if name == 'nt':  # check and make call for specific operating system
             _ = system('cls')
@@ -140,6 +200,11 @@ class UninformedSearch(ABC):
             _ = system('clear')
 
     def show_maze_on_console(self, clear):
+        """
+        在控制台中显示迷宫
+        :param clear:
+        :return:
+        """
         output = '_________________\n'
         if clear:
             UninformedSearch.clear_console()
@@ -161,6 +226,11 @@ class UninformedSearch(ABC):
         print(output)
 
     def execute(self, mode):
+        """
+        主函数
+        :param mode: 模式为1则不显示迷宫，模式为2则显示迷宫
+        :return:
+        """
         self.initialize()
         print("\n", self.name, "\n_________________________________________________________________________\n")
         end = False
