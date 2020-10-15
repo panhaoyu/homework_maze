@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from time import sleep
 from os import system, name
+from time import sleep
+
 from Node import Node
 
 
