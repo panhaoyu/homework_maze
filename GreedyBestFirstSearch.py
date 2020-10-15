@@ -8,13 +8,13 @@ class GreedyBestFirstSearch(InformedSearch):
         :param nodes:
         :return:
         """
+        # 将节点按距离目标的直线距离进行排序
         for i in range(0, len(nodes)):  # Add all accessible states to the beginning of the frontier
-            if len(self.frontier) == 0:
+            if len(self.frontier) == 0:  # 如果路径为空，直接添加进去
                 self.frontier.append(nodes[i])
             else:
-                for j in range(0, len(self.frontier)):
-                    if nodes[i].distance_to_nearest_goal <= self.frontier[
-                        j].distance_to_nearest_goal:  # Sort according to cost
+                for j in range(0, len(self.frontier)):  # 对已有节点进行遍历
+                    if nodes[i].distance_to_nearest_goal <= self.frontier[j].distance_to_nearest_goal:
                         self.frontier.insert(j, nodes[i])
                         break
                     elif j == len(self.frontier) - 1:

@@ -16,6 +16,8 @@ def main(file, mode):
         initial_state = Node(initial_state[0], initial_state[1])  # 将初始状态转换为一个Node对象
         goal_states = maze_data["goal_states"]  # 取出目标状态
 
+        # 这里注释掉的一大堆代码是采用不同的搜索算法进行搜索
+
         # dfs = DFS("DEPTH-FIRST SEARCH", maze, initial_state, goal_states)
         # dfs.execute(mode)
 
